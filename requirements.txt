@@ -1,0 +1,9 @@
+gunicorn
+django-heroku
+django-simple-captcha
+phonenumbers
+mock
+flake8
+black
+coverage
+coveralls
