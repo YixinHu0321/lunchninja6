@@ -37,9 +37,9 @@ def importschool():
         # host="localhost",
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
+    cur.execute("CREATE TABLE userrequest (id INTEGER, user_id INTEGER, service_type VARCHAR, time_stamp DATE, cuisine VARCHAR, school VARCHAR, department VARCHAR)")
     cur.execute("DROP TABLE IF EXISTS school")
     cur.execute("CREATE TABLE school (name VARCHAR, id INTEGER)")
-    cur.execute("CREATE TABLE userrequest (id INTEGER, user_id INTEGER, service_type VARCHAR, time_stamp DATE, cuisine VARCHAR, school VARCHAR, department VARCHAR)")
     filepath = "datasource/School.csv"
     with open(
         filepath, "r", encoding="UTF-8-sig"
