@@ -1,12 +1,11 @@
 from django.test import TestCase
 
 
-import mock
+from unittest import mock
 
 
 class SignupViewTest(TestCase):
     def test_view_url_exists_at_desired_location(self):
-
         response = self.client.get("/signup/")
         self.assertEqual(response.status_code, 200)
 
@@ -29,8 +28,8 @@ class SignupViewTest(TestCase):
             "first_name": "donald",
             "last_name": "trump",
             "Phone": "1234567890",
-            "school": "other school",
-            "department": "other department",
+            "school": "Tandon School of Engineering",
+            "department": "Electrical Engineering",
             "password1": "Pass12345",
             "password2": "Pass12345",
         }

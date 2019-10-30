@@ -5,42 +5,6 @@
 /*//////////////////////////////////////////////////////////////////
 [ FONT ]*/
 
-@font-face {
-  font-family: Poppins-Regular;
-  src: url('../fonts/poppins/Poppins-Regular.ttf'); 
-}
-
-@font-face {
-  font-family: Poppins-Bold;
-  src: url('../fonts/poppins/Poppins-Bold.ttf'); 
-}
-
-@font-face {
-  font-family: Poppins-Medium;
-  src: url('../fonts/poppins/Poppins-Medium.ttf'); 
-}
-
-@font-face {
-  font-family: Raleway-Regular;
-  src: url('../fonts/raleway/Raleway-Regular.ttf'); 
-}
-
-@font-face {
-  font-family: Raleway-Black;
-  src: url('../fonts/raleway/Raleway-Black.ttf'); 
-}
-
-@font-face {
-  font-family: Raleway-SemiBold;
-  src: url('../fonts/raleway/Raleway-SemiBold.ttf'); 
-}
-
-@font-face {
-  font-family: Raleway-Bold;
-  src: url('../fonts/raleway/Raleway-Bold.ttf'); 
-}
-
-
 /*//////////////////////////////////////////////////////////////////
 [ RESTYLE TAG ]*/
 
@@ -149,6 +113,7 @@ iframe {
 
 /*//////////////////////////////////////////////////////////////////
 [ Utility ]*/
+
 .txt1 {
   font-family: Raleway-Regular;
   font-size: 16px;
@@ -168,6 +133,7 @@ iframe {
 /*//////////////////////////////////////////////////////////////////
 [ login ]*/
 
+/*not remove*/
 .limiter {
   width: 100%;
   margin: 0 auto;
@@ -541,7 +507,13 @@ iframe {
   visibility: visible;
   opacity: 1;
 }
-
+.back-lunchninja {
+    margin-left: auto;
+    margin-right:auto;
+    display:block;
+  max-width:15%;
+  max-height:15%
+}
 @media (max-width: 992px) {
   .alert-validate::before {
     visibility: visible;
