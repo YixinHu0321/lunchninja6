@@ -1,8 +1,11 @@
 import psycopg2
 import csv
 import math
+import os
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
+
+DATABASE_URL = os.environ['DATABASE_URL']
 
 # Thanks to https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
 def getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2):
@@ -27,8 +30,7 @@ def deg2rad(deg):
 
 def importschool():
     # let postgres start: pg_ctl -D /usr/local/var/postgres start
-    conn = psycopg2.connect(
-        database="lunchninja",  port=5433, sslmode='require'
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         # host="localhost",
     # user = "postgres", password = "password"
         # database="lunchninja",
@@ -57,11 +59,7 @@ def importschool():
 
 def importdepartment():
     # let postgres start: pg_ctl -D /usr/local/var/postgres start
-    conn = psycopg2.connect(
-        database="lunchninja",sslmode='require'
-        #  host="localhost",
-        # , user="postgres", password="password"
-    )
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS department")
@@ -86,13 +84,7 @@ def importdepartment():
 
 def importrestaurant():
     # let postgres start: pg_ctl -D /usr/local/var/postgres start
-    conn = psycopg2.connect(
-        database="lunchninja", sslmode='require'
-        # host="localhost", 
-        # , user="postgres", password="password"
-        # database="lunchninja",
-        # host="localhost",
-    )
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS restaurant")
@@ -159,13 +151,7 @@ def importrestaurant():
 
 def importcuisine():
     # let postgres start: pg_ctl -D /usr/local/var/postgres start
-    conn = psycopg2.connect(
-        database="lunchninja", sslmode='require'
-        # host="localhost"
-        # , user="postgres", password="password"
-        # database="lunchninja",
-        # host="localhost",
-    )
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS cuisine")
@@ -183,14 +169,7 @@ def importcuisine():
 
 
 def retrieveschool():
-    conn = psycopg2.connect(
-        database="lunchninja", sslmode='require'
-        # , host="localhost"
-        # , user="postgres", password="password"
-        # database="lunchninja",
-        # host="localhost",
-    )
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require').set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute("SELECT name,id FROM school")
     count = cur.fetchall()
@@ -201,13 +180,7 @@ def retrieveschool():
 
 
 def retrievedepartment(schoolname):
-    conn = psycopg2.connect(
-        database="lunchninja", sslmode='require'
-        # , host="localhost"
-        # , user="postgres", password="password"
-        # database="lunchninja",
-        # host="localhost",
-    )
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     # cur.execute("SELECT id FROM school WHERE name LIKE \'" + schoolname +"\'")
