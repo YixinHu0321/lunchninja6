@@ -78,7 +78,7 @@ def user_service(request):
         else:
             email_subject = "Service Confirmation"
             message = "Service selected"
-            to_email = up@nyu.edu
+            to_email = "up@nyu.edu"
             email = EmailMessage(email_subject, message, to=[to_email])
             email.send()
         return redirect("/")
