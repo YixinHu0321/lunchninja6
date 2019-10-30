@@ -35,7 +35,6 @@ def importschool():
     # user = "postgres", password = "password"
         # database="lunchninja",
         # host="localhost",
-    )
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS school")
