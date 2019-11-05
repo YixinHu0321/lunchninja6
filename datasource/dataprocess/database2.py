@@ -31,10 +31,6 @@ def deg2rad(deg):
 def importschool():
     # let postgres start: pg_ctl -D /usr/local/var/postgres start
     conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        # host="localhost",
-    # user = "postgres", password = "password"
-        # database="lunchninja",
-        # host="localhost",
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS homepage_school")
@@ -53,6 +49,7 @@ def importschool():
 
     conn.commit()
     conn.close()
+    print("imported school data")
     return ()
 
 
@@ -78,6 +75,7 @@ def importdepartment():
 
     conn.commit()
     conn.close()
+    print("imported restaurant data")
     return ()
 
 
@@ -165,6 +163,7 @@ def importrestaurant():
 
     conn.commit()
     conn.close()
+    print("imported restaurant data")
     return ()
 
 
