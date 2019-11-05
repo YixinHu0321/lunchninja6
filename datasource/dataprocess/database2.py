@@ -5,7 +5,8 @@ import os
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 
-DATABASE_URL = os.environ['DATABASE_URL']
+# DATABASE_URL = os.environ["DATABASE_URL"]
+# dump data: heroku pg:push lunchninja postgresql-metric-12269 --app lunch-ninja-7
 
 # Thanks to https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
 def getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2):
@@ -25,17 +26,15 @@ def deg2rad(deg):
     return deg * (math.pi / 180)
 
 
-
-
-
 def importschool():
     # let postgres start: pg_ctl -D /usr/local/var/postgres start
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    # conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    conn = psycopg2.connect(host="localhost", database="lunchninja")
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS homepage_school")
-    cur.execute("CREATE TABLE homepage_school (name VARCHAR, id INTEGER)")
-    filepath = "/../School.csv"
+    cur.execute("CREATE TABLE homepage_school (name VARCHAR, id INTEGER PRIMARY KEY)")
+    filepath = "datasource/School.csv"
     with open(
         filepath, "r", encoding="UTF-8-sig"
     ) as fin:  # `with` statement available in 2.5+
@@ -44,7 +43,8 @@ def importschool():
         for i in dr:
             print(i)
             cur.execute(
-                "INSERT INTO homepage_school (name, id) VALUES (%s, %s)", (i["Name"], i["id"])
+                "INSERT INTO homepage_school (name, id) VALUES (%s, %s)",
+                (i["schoolname"], i["id"]),
             )
 
     conn.commit()
@@ -55,14 +55,15 @@ def importschool():
 
 def importdepartment():
     # let postgres start: pg_ctl -D /usr/local/var/postgres start
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    # conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    conn = psycopg2.connect(host="localhost", database="lunchninja")
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS homepage_department")
     cur.execute(
-        "CREATE TABLE homepage_department (name VARCHAR, school INTEGER, id INTEGER, description VARCHAR)"
+        "CREATE TABLE homepage_department (name VARCHAR, school INTEGER, id INTEGER PRIMARY KEY, description VARCHAR)"
     )
-    filepath2 = "/../Department.csv"
+    filepath2 = "datasource/Department.csv"
     with open(
         filepath2, "r", encoding="UTF-8-SIG"
     ) as fin2:  # `with` statement available in 2.5+
@@ -70,7 +71,7 @@ def importdepartment():
         for i in dr2:
             cur.execute(
                 "INSERT INTO homepage_department (name, school, id, description) VALUES (%s, %s, %s, %s)",
-                (i["Name"], i["School"], i["id"], i["Description"]),
+                (i["departmentname"], i["School"], i["id"], i["Description"]),
             )
 
     conn.commit()
@@ -81,14 +82,15 @@ def importdepartment():
 
 def importrestaurant():
     # let postgres start: pg_ctl -D /usr/local/var/postgres start
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    # conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    conn = psycopg2.connect(host="localhost", database="lunchninja")
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS homepage_restaurant")
     cur.execute(
-        "CREATE TABLE homepage_restaurant (id INTEGER, name VARCHAR, cuisine VARCHAR, score INTEGER, borough VARCHAR, building VARCHAR, street VARCHAR, zipcode VARCHAR, phone VARCHAR, latitude VARCHAR, longitude VARCHAR)"  # noqa: E501
+        "CREATE TABLE homepage_restaurant (id INTEGER PRIMARY KEY, name VARCHAR, cuisine VARCHAR, score INTEGER, borough VARCHAR, building VARCHAR, street VARCHAR, zipcode INTEGER, phone VARCHAR, latitude float, longitude float)"  # noqa: E501
     )
-    filepath3 = "/../DOHMH_New_York_City_Restaurant_Inspection_Results.csv"
+    filepath3 = "datasource/DOHMH_New_York_City_Restaurant_Inspection_Results.csv"
     with open(
         filepath3, "r", encoding="UTF-8"
     ) as fin3:  # `with` statement available in 2.5+
@@ -119,30 +121,30 @@ def importrestaurant():
                 )
                 if distance <= 1.5:
                     cur.execute(
-                        "SELECT COUNT(*) FROM homepage_restaurant WHERE id == "
+                        "SELECT COUNT(*) FROM homepage_restaurant WHERE id ="
                         + str(rid)
                     )
                     count = cur.fetchone()
                     if int(count[0]) == 0:
                         cur.execute(
                             "INSERT INTO homepage_restaurant (id, name, cuisine, score, borough, building, street, zipcode, phone, latitude, longitude) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",  # noqa: E501
-                        (
-                            i["CAMIS"],
-                            i["DBA"],
-                            i["CUISINE DESCRIPTION"],
-                            i["SCORE"],
-                            i["BORO"],
-                            i["BUILDING"],
-                            i["STREET"],
-                            i["ZIPCODE"],
-                            i["PHONE"],
-                            i["Latitude"],
-                            i["Longitude"],
-                        ),
-                        
+                            (
+                                i["CAMIS"],
+                                i["DBA"],
+                                i["CUISINE DESCRIPTION"],
+                                i["SCORE"],
+                                i["BORO"],
+                                i["BUILDING"],
+                                i["STREET"],
+                                i["ZIPCODE"],
+                                i["PHONE"],
+                                i["Latitude"],
+                                i["Longitude"],
+                            ),
+                        )
                     else:
                         cur.execute(
-                            "SELECT score FROM homepage_restaurant WHERE id == "
+                            "SELECT score FROM homepage_restaurant WHERE id = "
                             + str(rid)
                         )
                         score = cur.fetchone()
@@ -152,7 +154,7 @@ def importrestaurant():
                                 + i["SCORE"]
                                 + " WHERE id = "
                                 + str(rid)
-                            ))
+                            )
     # cur.execute(
     #     "DELETE FROM homepage_restaurant a USING restaurant b WHERE a.score > b.score AND a.id = b.id"
     # )
@@ -169,16 +171,17 @@ def importrestaurant():
 
 def importcuisine():
     # let postgres start: pg_ctl -D /usr/local/var/postgres start
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    # conn = psycopg2.connect(DATABASE_URL, sslmode="require")
+    conn = psycopg2.connect(host="localhost", database="lunchninja")
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
-    cur.execute("DROP TABLE IF EXISTS cuisine")
-    cur.execute("CREATE TABLE cuisine (name VARCHAR, id INTEGER)")
-    cur.execute("SELECT DISTINCT cuisine FROM restaurant")
+    cur.execute("DROP TABLE IF EXISTS homepage_cuisine")
+    cur.execute("CREATE TABLE homepage_cuisine (name VARCHAR, id INTEGER PRIMARY KEY)")
+    cur.execute("SELECT DISTINCT cuisine FROM homepage_restaurant")
     count = cur.fetchall()
     id = 0
     for each in count:
-        cur.execute("INSERT INTO cuisine (name, id) VALUES (%s, %s)", (each, id))
+        cur.execute("INSERT INTO homepage_cuisine (name, id) VALUES (%s, %s)", (each, id))
         id = id + 1
 
     conn.commit()

@@ -97,6 +97,8 @@ def importrestaurant():
 
             latitude = float(i["Latitude"])
             longitude = float(i["Longitude"])
+            print(latitude)
+            print(longitude)
             score = int(i["SCORE"])
             if score > 30:
                 continue
@@ -112,7 +114,7 @@ def importrestaurant():
                     count = cur.fetchone()
                     if int(count[0]) == 0:
                         cur.execute(
-                            "INSERT INTO homepage_restaurant (id, name, cuisine, score, borough, building, street, zipcode, phone, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",  # noqa: E501
+                            "INSERT INTO restaurant (id, name, cuisine, score, borough, building, street, zipcode, phone, latitude, longitude) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",  # noqa: E501
                             (
                                 i["CAMIS"],
                                 i["DBA"],
