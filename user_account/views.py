@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from .token_generator import account_activation_token
 from django.core.mail import EmailMessage
 from django.http import JsonResponse
-from homepage.models import  Department, School
+from homepage.models import Department, School
 
 
 from .models import LunchNinjaUser
@@ -21,45 +21,16 @@ def index(request):
     return render(request, "index.html")
 
 
-# def retrieveschool():
-#     conn = psycopg2.connect(database="lunchninja", host="localhost", user='postgres', password='password')
-#     # conn = psycopg2.connect(database="lunchninja", host="localhost")
-#     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-#     cur = conn.cursor()
-#     cur.execute("SELECT name,id FROM school")
-#     count = cur.fetchall()
-#     # print(count)
-#     conn.commit()
-#     conn.close()
-#     return count
-#
-#
-# def retrievedepartment():
-#     conn = psycopg2.connect(database="lunchninja", host="localhost", user='postgres', password='password')
-#     # conn = psycopg2.connect(database="lunchninja", host="localhost")
-#     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-#     cur = conn.cursor()
-#     # cur.execute("SELECT id FROM school WHERE name LIKE \'" + schoolname +"\'")
-#     # id = cur.fetchone()
-#     sqlline = "SELECT name,school FROM department"
-#     cur.execute(sqlline)
-#     count = cur.fetchall()
-#     # print(count)
-#     conn.commit()
-#     conn.close()
-#     return count
-
-
 def merge():
     department = Department.objects.all()
     school = School.objects.all()
-    school_list=[]
-    department_list=[]
+    school_list = []
+    department_list = []
     for s in school:
-        school_list.append((s.name,s.id))
+        school_list.append((s.name, s.id))
 
     for d in department:
-        department_list.append((d.name,d.school))
+        department_list.append((d.name, d.school))
     # schoollists = retrieveschool()
     # departmentlists = retrievedepartment()
 
@@ -73,8 +44,7 @@ def merge():
         id_school[str(schoolitem[1])] = schoolitem[0]
         school_department[schoolitem[0]] = []
     for departmentitem in department_list:
-
-        department = departmentitem[0]
+        department.append(departmentitem[0])
         school_department[id_school[str(departmentitem[1])]].append(departmentitem[0])
         department_school[departmentitem[0]] = [id_school[str(departmentitem[1])]]
 
@@ -83,6 +53,15 @@ def merge():
     # print(school_department)
     # print(department_school)
     return school, department, school_department, department_school
+
+
+def checkajax_department(request):
+    if request.method == "GET" and (
+        request.path.startswith("/ajax/load_departments")
+        or request.path.startswith("/signup/ajax/load_departments")
+    ):
+        return True
+    return False
 
 
 def usersignup(request):
@@ -125,12 +104,14 @@ def usersignup(request):
             errordict[key] = messagetext
         errordict["signup_form"] = signup_form
         return render(request, "signup.html", errordict)
-    elif request.method == "GET" and (request.path.startswith("/ajax/load_departments") or request.path.startswith("/signup/ajax/load_departments")):
-
+    elif checkajax_department(request):
         school_id = request.GET.get("school_id", None)
         response = school_departments[school_id]
         return JsonResponse(response, safe=False)
-    elif request.method == "GET" and (request.path.startswith("/ajax/load_school") or request.path.startswith("/signup/ajax/load_school")):
+    elif request.method == "GET" and (
+        request.path.startswith("/ajax/load_school")
+        or request.path.startswith("/signup/ajax/load_school")
+    ):
         department_id = request.GET.get("department_id", None)
         school = depatment_school[department_id][0]
         response = []

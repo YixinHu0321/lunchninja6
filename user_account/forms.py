@@ -1,33 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import LunchNinjaUser
-from homepage.models import UserRequest, Department, School, Cuisine
-
-
-#
-# def retrieveschool():
-#     conn = psycopg2.connect(database="lunchninja", host="localhost", user='postgres', password='password')
-#     # conn = psycopg2.connect(database="lunchninja", host="localhost")
-#     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-#     cur = conn.cursor()
-#     cur.execute("SELECT name,id  FROM school")
-#     count = cur.fetchall()
-#     conn.commit()
-#     conn.close()
-#     return count
-#
-#
-# def retrievedepartment():
-#     conn = psycopg2.connect(database="lunchninja", host="localhost", user='postgres', password='password')
-#     # conn = psycopg2.connect(database="lunchninja", host="localhost")
-#     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-#     cur = conn.cursor()
-#     sqlline = "SELECT name,school FROM department"
-#     cur.execute(sqlline)
-#     count = cur.fetchall()
-#     conn.commit()
-#     conn.close()
-#     return count
+from homepage.models import Department, School
 
 
 def creat_school_tuple():
@@ -35,9 +9,9 @@ def creat_school_tuple():
     read_school = School.objects.all()
     schoollist = []
     # read_school = retrieveschool()
+    schoollist.append(("select school", "select school"))
     for s in read_school:
         schoollist.append((s.name, s.name))
-    schoollist[0] = ("select school", "select school")
     return tuple(schoollist)
 
 
@@ -46,9 +20,9 @@ def creat_department_tuple():
 
     departmentlist = []
     # read_department = retrievedepartment()
+    departmentlist.append(("select department", "select department"))
     for d in read_department:
         departmentlist.append((d.name, d.name))
-    departmentlist[0] = ("select department", "select department")
     return tuple(departmentlist)
 
 
