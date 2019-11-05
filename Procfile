@@ -1,3 +1,4 @@
+release: rm -f db.sqlite3
 release: python datasource/dataprocess/database.py
 release: python manage.py makemigrations user_account
 release: python manage.py makemigrations homepage
